@@ -1,5 +1,4 @@
-﻿using Bitly.Core.Data;
-using Bitly.Core.Data.Entities;
+﻿using Bitly.Core.Data.Entities;
 using Bitly.Core.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -39,7 +38,7 @@ namespace Bitly.Core.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var accessToken = tokenHandler.WriteToken(token);
-            
+
             return Task.FromResult(new Token
             {
                 AccessToken = accessToken,
