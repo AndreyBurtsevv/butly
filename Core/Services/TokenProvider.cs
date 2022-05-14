@@ -14,12 +14,10 @@ namespace Bitly.Core.Services
     public class TokenProvider
     {
         private readonly IConfiguration _config;
-        private readonly AppDbContext _context;
 
-        public TokenProvider(IConfiguration config, AppDbContext context)
+        public TokenProvider(IConfiguration config)
         {
             _config = config;
-            _context = context;
         }
 
         public Task<Token> CreateTokensAsync(User user)
@@ -38,17 +36,10 @@ namespace Bitly.Core.Services
                 Expires = DateTime.UtcNow.AddSeconds(lifetimeSec),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var accessToken = tokenHandler.WriteToken(token);
-
-            _context.UserTokens.Add(new Microsoft.AspNetCore.Identity.IdentityUserToken<int>()
-            {
-                UserId = user.Id,
-                Value = accessToken,
-                LoginProvider = "TokenProvider",
-                Name = "access_token"
-            });
-            _context.SaveChanges();
+            
             return Task.FromResult(new Token
             {
                 AccessToken = accessToken,

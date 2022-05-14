@@ -17,7 +17,6 @@ namespace Bitly.Core.Services.Implementations
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
-        private static Random random = new Random();
 
         public UrlService(AppDbContext dbContext, IHttpContextAccessor accessor, IMapper mapper)
         {
@@ -30,13 +29,8 @@ namespace Bitly.Core.Services.Implementations
         {
             var newUrl = new Url();
             newUrl.FullUrl = model.FullUrl;
-            newUrl.User = _context.Users.FirstOrDefault();
-            var key = RandomString();
-
-            while (_context.Urls.Any(x => x.Key == key))
-                key = RandomString();
-
-            newUrl.Key = key;
+            newUrl.User = GetCurrentUser();
+            newUrl.Key = RandomString();
             _context.Urls.Add(newUrl);
             _context.SaveChanges();
             return Task.FromResult(_mapper.Map<UrlDto>(newUrl));
@@ -44,15 +38,24 @@ namespace Bitly.Core.Services.Implementations
 
         private string RandomString()
         {
+            Random random = new Random();
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, 7)
+
+            var key = new string(Enumerable.Repeat(chars, 7)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            while (_context.Urls.Any(x => x.Key == key))
+                key = new string(Enumerable.Repeat(chars, 7)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            return key;
         }
 
         public void Delete(string key)
         {
             var url = _context.Urls.FirstOrDefault(x => x.Key == key);
             var user = GetCurrentUser();
+
             if (url.UserId != user.Id)
                 throw new Exception("Claim corrupted.");
 

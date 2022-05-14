@@ -27,8 +27,7 @@ namespace Bitly
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+             
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
@@ -39,11 +38,11 @@ namespace Bitly
             services.AddAutoMapper(typeof(MappingEntity));
 
             services.AddScoped<IUrlService, UrlService>();
+            services.AddScoped<IRedirectService, RedirectService>();
             services.AddScoped<TokenProvider>();
 
-            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-
+            services.AddControllers()
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddAuthentication(x =>
             {
@@ -106,7 +105,6 @@ namespace Bitly
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

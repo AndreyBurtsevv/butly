@@ -2,7 +2,7 @@
 
 namespace Bitly.Core.Dto
 {
-    public class LoginView
+    public class Login
     {
         [Required]
         [DataType(DataType.Text)]

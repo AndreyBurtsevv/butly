@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Bitly.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -52,7 +52,7 @@ namespace Bitly.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginView login)
+        public async Task<IActionResult> Login(Login login)
         {
             if (ModelState.IsValid)
             {

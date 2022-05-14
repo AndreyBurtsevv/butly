@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Bitly.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("api/urls")]
     [ApiController]
     public class UrlController : ControllerBase
     {
@@ -19,7 +20,6 @@ namespace Bitly.Controllers
             _companyService = companyService;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
